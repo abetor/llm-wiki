@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "llm-wiki/topic/0.1.0",
+  "title": "Topic manifest (topic.json at the topic directory root)",
+  "type": "object",
+  "required": ["spec_version", "topic", "slug", "created_at"],
+  "additionalProperties": false,
+  "properties": {
+    "spec_version": { "type": "string", "pattern": "^0\\.1\\.\\d+$" },
+    "topic": { "type": "string", "minLength": 1 },
+    "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "created_at": { "type": "string", "minLength": 10 },
+    "description": { "type": "string" },
+    "meta": { "type": "object" }
+  }
+}

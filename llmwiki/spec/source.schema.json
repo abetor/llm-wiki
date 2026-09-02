@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "llm-wiki/source/0.1.0",
+  "title": "Source (one row in sources/sources.jsonl)",
+  "type": "object",
+  "required": ["id", "kind", "title"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^src_[0-9a-f]{12}$" },
+    "kind": { "enum": ["web", "youtube", "telegram", "paper", "book", "repo", "dataset", "local", "other"] },
+    "title": { "type": "string", "minLength": 1 },
+    "url": { "type": "string", "minLength": 1 },
+    "fetched_at": { "type": "string" },
+    "tool": { "type": "string" },
+    "content_path": { "type": "string" },
+    "meta": { "type": "object" }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "llm-wiki/wiki/0.1.0",
+  "title": "Synthesis page (YAML frontmatter in final/wiki/<concept>.md)",
+  "type": "object",
+  "required": ["id", "title", "claims", "updated_at"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^wik_[0-9a-f]{12}$" },
+    "title": { "type": "string", "minLength": 1 },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^clm_[0-9a-f]{12}$" }
+    },
+    "updated_at": { "type": "string", "minLength": 10 }
+  }
+}

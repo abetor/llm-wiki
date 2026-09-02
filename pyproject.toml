@@ -1,0 +1,38 @@
+[project]
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["python", "knowledge-management", "llm", "data-validation", "json-schema", "provenance", "local-first"]
+# The distribution is named llmwiki, not tool-llm-wiki. Consumers install this repository and
+# import llmwiki, so changing the package name would break the public contract.
+name = "llmwiki"
+version = "0.1.0"
+description = "A schema-driven local knowledge store with validation, deduplication, and atomic writes"
+requires-python = ">=3.11"
+dependencies = []
+
+# The package itself uses only the standard library. pytest is required only for tests, so it is an
+# optional extra rather than a runtime dependency. PEP 621 optional-dependencies also works with
+# pip versions that predate PEP 735 dependency groups.
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+llmwiki = "llmwiki.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["llmwiki*"]
+
+[tool.setuptools.package-data]
+llmwiki = ["spec/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[project.urls]
+Repository = "https://github.com/abetor/llm-wiki"
+Documentation = "https://github.com/abetor/llm-wiki#readme"
+Issues = "https://github.com/abetor/llm-wiki/issues"

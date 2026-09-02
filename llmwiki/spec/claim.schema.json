@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "llm-wiki/claim/0.1.0",
+  "title": "Atomic fact (one claims.jsonl row in staging/ or final/)",
+  "type": "object",
+  "required": ["id", "text", "confidence", "status", "evidence", "created_at"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^clm_[0-9a-f]{12}$" },
+    "text": { "type": "string", "minLength": 1 },
+    "confidence": { "enum": ["high", "medium", "low"] },
+    "status": { "enum": ["candidate", "verified", "final", "retracted"] },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source_id", "quote", "stance"],
+        "additionalProperties": false,
+        "properties": {
+          "source_id": { "type": "string", "pattern": "^src_[0-9a-f]{12}$" },
+          "quote": { "type": "string", "minLength": 1 },
+          "stance": { "enum": ["supports", "contradicts", "mentions"] },
+          "locator": {
+            "type": "object",
+            "required": ["type", "value"],
+            "additionalProperties": false,
+            "properties": {
+              "type": { "enum": ["block", "heading", "timestamp", "page", "line", "other"] },
+              "value": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "tags": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "created_at": { "type": "string", "minLength": 10 },
+    "run_id": { "type": "string" },
+    "meta": { "type": "object" }
+  }
+}
