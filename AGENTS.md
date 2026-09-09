@@ -74,3 +74,15 @@ Use English for code, comments, documentation, diagnostics, and commit messages,
 except fixtures whose explicit purpose is Unicode behavior. Use no emoji or dash
 characters in place of a plain hyphen. Keep commit subjects short and imperative;
 use the body to explain why. Add complexity only for a current need.
+
+## Non-English test fixtures
+
+Six Cyrillic lines stay in tests on purpose because the characters are the
+subject of the contract:
+
+- `tests/test_core.py::topic_dir` checks deterministic fallback when a mixed Cyrillic
+  and Latin title is converted to a slug.
+- `tests/test_core.py::test_unicode_line_separators_roundtrip_escaped` checks readable
+  Cyrillic JSON together with U+0085, U+2028, and U+2029 escaping.
+- `tests/test_wiki.py::test_cyrillic_title_makes_readable_slug` checks that a Cyrillic
+  title produces the expected readable Unicode filename.

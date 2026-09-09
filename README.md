@@ -1,6 +1,9 @@
-# llmwiki
+# llm-wiki
 
-`llmwiki` is a local, schema-driven knowledge format and mutation API. It keeps
+[![Tests](https://github.com/abetor/llm-wiki/actions/workflows/tests.yml/badge.svg)](https://github.com/abetor/llm-wiki/actions/workflows/tests.yml)
+
+`llm-wiki` (Python package `llmwiki`) is a local, schema-driven knowledge format and
+validated mutation API. It keeps
 sources, claims, evidence, and synthesized wiki pages consistent without a database,
 network service, language model, or credentials.
 
@@ -14,8 +17,8 @@ silently disappear, and a successful format check is mistaken for complete work.
 Concurrent writers add another failure mode: a shared temporary file can lose a row
 even after the caller received a successful result.
 
-`llmwiki` makes those invariants executable. Every mutation passes through one socket
-that validates against packaged schemas, checks references, deduplicates exact claims,
+`llmwiki` makes those invariants executable. Every mutation passes through one validated
+mutation API that checks packaged schemas and references, deduplicates exact claims,
 serializes writers, and replaces files atomically. Separate read-only checks verify
 quotes and audit synthesis completeness.
 
@@ -72,11 +75,11 @@ python3 -m venv .venv
 python3 -m pip install -e ".[dev]"
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider
 
-python3 -m llmwiki init /tmp/llmwiki-demo "Agent memory" --slug agent-memory
+topic_dir="$(python3 -m llmwiki init "$(mktemp -d)" "Agent memory" --slug agent-memory)"
 printf '%s\n' '{"kind":"web","title":"Example","url":"https://example.org/article"}' | \
-  python3 -m llmwiki add-source /tmp/llmwiki-demo/agent-memory
-python3 -m llmwiki validate /tmp/llmwiki-demo/agent-memory
-python3 -m llmwiki doctor /tmp/llmwiki-demo/agent-memory
+  python3 -m llmwiki add-source "$topic_dir"
+python3 -m llmwiki validate "$topic_dir"
+python3 -m llmwiki doctor "$topic_dir"
 ```
 
 Every command that reads JSON accepts one object on stdin unless `--batch` is stated.
@@ -115,6 +118,10 @@ python3 -m llmwiki audit "$topic_dir" --min-words-per-claim 1
 Expected final outputs are `OK`, `[]`, and `[]` for validation, quote verification,
 and audit respectively.
 
+Quote checks establish traceability to source text; they do not establish that a source or
+claim is true. The example passes `status: verified` itself; deciding what deserves that
+status belongs to the caller.
+
 ## Limitations
 
 - Deduplication is exact after text normalization, not semantic.
@@ -128,18 +135,10 @@ and audit respectively.
 - Quote verification normalizes NFC, converter markup, and whitespace. It checks line
   locators but cannot validate timestamp, page, or heading locators from text alone.
 - Agent CLI adapters under `llmwiki/shared/` are vendored extension scaffolding. The
-  knowledge socket itself imports only the custom argument parser and does not invoke
+  mutation API itself imports only the custom argument parser and does not invoke
   an agent, LLM, or network service.
-
-Six Cyrillic lines remain intentionally in tests because the characters are the
-subject of the contract:
-
-- `tests/test_core.py::topic_dir` checks deterministic fallback when a mixed Cyrillic
-  and Latin title is converted to a slug.
-- `tests/test_core.py::test_unicode_line_separators_roundtrip_escaped` checks readable
-  Cyrillic JSON together with U+0085, U+2028, and U+2029 escaping.
-- `tests/test_wiki.py::test_cyrillic_title_makes_readable_slug` checks that a Cyrillic
-  title produces the expected readable Unicode filename.
+- A few tests use Cyrillic text on purpose: readable slugs and JSON escaping for
+  non-Latin titles are part of the contract.
 
 ## Data and credential boundary
 
@@ -169,6 +168,11 @@ python3 -m pip install -e .
 cd /tmp
 PYTHONDONTWRITEBYTECODE=1 python3 /path/to/tool-llm-wiki/smoke/smoke_contract.py
 ```
+
+## Provenance
+
+This repository began as a public source snapshot of a personal tool. Earlier local development
+history is not included.
 
 ## License
 
